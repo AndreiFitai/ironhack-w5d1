@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const User = require('../models/User')
 const bcrypt = require('bcrypt')
+const passport = require('passport')
 
 /* GET home page */
 router.get('/sign-up', (req, res, next) => {
@@ -20,7 +21,7 @@ router.post('/sign-up', (req, res) => {
 
 /* GET home page */
 router.get('/sign-in', (req, res, next) => {
-    res.render('sign-in')
+    res.render('sign-in', { error: req.flash('error') })
 })
 
 /* GET home page */
@@ -30,20 +31,14 @@ router.get('/sign-out', (req, res, next) => {
     })
 })
 
-router.post('/sign-in', (req, res) => {
-    const { email, password } = req.body
-
-    User.findOne({ email }).then(user => {
-        if (!user) res.send('User does not exist!')
-
-        const match = bcrypt.compareSync(password, user.password)
-
-        if (!match) return res.send('Password did not match')
-
-        req.session.currentUser = { ...user.toObject(), password: undefined }
-
-        res.send('You are logged in!')
+router.post(
+    '/sign-in',
+    passport.authenticate('local', {
+        successRedirect: '/',
+        failureRedirect: '/auth/sign-in',
+        failureFlash: true,
+        passReqToCallback: true,
     })
-})
+)
 
 module.exports = router
