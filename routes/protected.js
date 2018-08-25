@@ -3,7 +3,9 @@ const router = express.Router()
 
 /* GET home page */
 router.get('/', (req, res, next) => {
-    res.render('index')
+    if (!req.session.currentUser) return res.send('Please log in first!')
+
+    res.send('Here is a secret: 42')
 })
 
 module.exports = router
