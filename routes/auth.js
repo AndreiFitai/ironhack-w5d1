@@ -19,16 +19,8 @@ router.post('/sign-up', (req, res) => {
     })
 })
 
-/* GET home page */
 router.get('/sign-in', (req, res, next) => {
     res.render('sign-in', { error: req.flash('error') })
-})
-
-/* GET home page */
-router.get('/sign-out', (req, res, next) => {
-    req.session.destroy(() => {
-        res.send('You are now logged out.')
-    })
 })
 
 router.post(
@@ -40,5 +32,10 @@ router.post(
         passReqToCallback: true,
     })
 )
+
+router.get('/logout', (req, res) => {
+    req.logout()
+    res.redirect('/auth/login')
+})
 
 module.exports = router
